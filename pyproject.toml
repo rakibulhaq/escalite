@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "escalite"
+version = "0.1.0"
+description = "Escalation by raising alerts using configured channels such as email, slack, whatsapp text when configured thresholds are crossed"
+authors = ["Rakibul Haq <haq.rakibul@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyodbc = "^5.1.0"
+requests = "^2.32.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

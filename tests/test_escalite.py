@@ -82,5 +82,8 @@ class TestEscalite:
         print(Escalite.get_all_logs())
 
     def test_end_logging_without_start(self):
+        # Reset Escalite state to ensure a fresh environment
+        Escalite._logging_started = False
+        Escalite._logs = {}
         with pytest.raises(RuntimeError):
             Escalite.end_logging()

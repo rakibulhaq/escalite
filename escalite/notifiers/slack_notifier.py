@@ -13,7 +13,7 @@ class SlackNotifier(BaseNotifier):
         self.config = config
 
     def notify(self, message: str, data: dict):
-        if not hasattr(self, "config"):
+        if not self.config:
             raise ValueError("Config not set")
         payload = {
             "text": f"{message}\n{data}"

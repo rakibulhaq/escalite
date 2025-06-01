@@ -1,2 +1,2 @@
 # escalite
-Escalation of email alerts based on configuration
+A Python library for collecting and dumping data from an api service.

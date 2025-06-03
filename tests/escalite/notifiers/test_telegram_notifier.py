@@ -1,5 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
+
+from escalite.formatters.dict_table_formatter import DictTableFormatter
 from escalite.notifiers.telegram_notifier import TelegramNotifier
 
 
@@ -41,3 +43,16 @@ def test_notify_sends_message(mock_post, telegram_notifier):
     assert kwargs["data"]["chat_id"] == "12345"
     assert "Hello" in kwargs["data"]["text"]
     assert "foo" in kwargs["data"]["text"]
+
+
+def test_init_with_config_sets_config_and_default_formatter():
+    config = {"bot_token": "token", "chat_id": "12345"}
+    notifier = TelegramNotifier(config=config)
+    assert notifier.config == config
+    assert isinstance(notifier.formatter, DictTableFormatter)
+
+
+def test_init_without_config_sets_none_and_default_formatter():
+    notifier = TelegramNotifier()
+    assert notifier.config is None
+    assert isinstance(notifier.formatter, DictTableFormatter)

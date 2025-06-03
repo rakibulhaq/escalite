@@ -1,11 +1,14 @@
 import requests
+
+from escalite.formatters.base_formatter import Formatter
 from escalite.notifiers.base_notifier import BaseNotifier
 from escalite.formatters.dict_table_formatter import DictTableFormatter
 
 
 class TelegramNotifier(BaseNotifier):
-    def __init__(self):
-        self.config = None
+    def __init__(self, config: dict = None, formatter: Formatter = DictTableFormatter()):
+        self.config = config
+        self.formatter = formatter
 
     def set_config(self, config: dict):
         required = ["bot_token", "chat_id"]
@@ -22,8 +25,7 @@ class TelegramNotifier(BaseNotifier):
 
         body = message
         if data:
-            formatter = DictTableFormatter()
-            body += "\n\n" + formatter.format(data)
+            body += "\n\n" + self.formatter.format(data)
 
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {

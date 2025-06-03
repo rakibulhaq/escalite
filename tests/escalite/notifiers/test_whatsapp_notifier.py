@@ -1,5 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
+
+from escalite.formatters.dict_table_formatter import DictTableFormatter
 from escalite.notifiers.whatsapp_notifier import WhatsAppNotifier
 
 
@@ -44,3 +46,16 @@ def test_notify_sends_request(mock_post, whatsapp_notifier):
     assert kwargs["json"]["to"] == "+123"
     assert "Hello" in kwargs["json"]["message"]
     mock_response.raise_for_status.assert_called_once()
+
+
+def test_init_with_config_sets_config_and_default_formatter():
+    config = {"api_url": "http://api", "token": "abc", "to": "+123"}
+    notifier = WhatsAppNotifier(config=config)
+    assert notifier.config == config
+    assert isinstance(notifier.formatter, DictTableFormatter)
+
+
+def test_init_without_config_sets_none_and_default_formatter():
+    notifier = WhatsAppNotifier()
+    assert notifier.config is None
+    assert isinstance(notifier.formatter, DictTableFormatter)

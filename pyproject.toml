@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "escalite"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Python library for collecting and dumping data from an api service."
 authors = ["Rakibul Haq <haq.rakibul@gmail.com>"]
 license = "MIT"

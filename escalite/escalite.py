@@ -12,8 +12,7 @@ _request_logs = contextvars.ContextVar("_request_logs", default=None)
 
 class Escalite:
     """
-    Escalite is a Python library for managing and interacting with the Escalite API.
-    Provides per-request logging using contextvars.
+    Escalite is a Python library for per-request logging using contextvars.
     """
 
     def __init__(self, api_key: str):

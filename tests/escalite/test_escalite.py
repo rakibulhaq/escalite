@@ -88,3 +88,28 @@ class TestEscalite:
         _request_logs.set(None)
         with pytest.raises(RuntimeError):
             Escalite.end_logging()
+
+    def test_logging_context_starts_and_ends_logging(self, capsys):
+        escalite = Escalite(api_key="dummy_key")
+        with escalite.logging_context():
+            logs = Escalite.get_all_logs()
+            assert "log_level" in logs
+            assert "log_date" in logs
+            assert logs.get("start_time") is not None
+
+        logs = Escalite.get_all_logs()
+        assert "time_elapsed" in logs
+        assert logs.get("end_time") is not None
+        captured = capsys.readouterr()
+        assert "Logs collected:" in captured.out
+
+    def test_logging_context_handles_exceptions_gracefully(self, capsys):
+        escalite = Escalite(api_key="dummy_key")
+        with pytest.raises(ValueError):
+            with escalite.logging_context():
+                raise ValueError("Test exception")
+        logs = Escalite.get_all_logs()
+        assert "time_elapsed" in logs
+        assert logs.get("end_time") is not None
+        captured = capsys.readouterr()
+        assert "Logs collected:" in captured.out

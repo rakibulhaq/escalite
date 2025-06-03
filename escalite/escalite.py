@@ -1,5 +1,6 @@
 import time
 import contextvars
+from contextlib import contextmanager
 from typing import Any
 
 from escalite.utils.constants import LOG_LEVEL, LOG_LEVELS, API_LOGS, START_TIME, END_TIME, SERVICE_LOGS, ERROR_LOGS, \
@@ -116,3 +117,17 @@ class Escalite:
                         code: int = None) -> None:
         Escalite.add_to_log(service_name, value=None, message=message, tag=SERVICE_LOGS, level=level,
                             extras={"url": url}, code=code)
+
+    # function using contextmanager to start and end logging automatically
+    @contextmanager
+    def logging_context(self):
+        """
+        Context manager to automatically start and end logging.
+        """
+        self.start_logging()
+        try:
+            yield
+        finally:
+            self.end_logging()
+            # Here you can process the logs, e.g., save to a file or send to a server
+            print("Logs collected:", Escalite.get_all_logs())  # For demonstration purposes

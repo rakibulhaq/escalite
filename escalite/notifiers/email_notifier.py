@@ -7,8 +7,8 @@ from escalite.notifiers.base_notifier import BaseNotifier
 
 
 class EmailNotifier(BaseNotifier):
-    def __init__(self):
-        self.config = {}
+    def __init__(self, config: dict = None):
+        self.config = config
 
     def set_config(self, config: dict):
         # Expected keys: smtp_server, smtp_port, sender_email,

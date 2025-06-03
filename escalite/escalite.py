@@ -3,6 +3,7 @@ import contextvars
 from contextlib import contextmanager
 from typing import Any
 
+from escalite.notifiers.notifier_factory import NotifierFactory
 from escalite.utils.constants import LOG_LEVEL, LOG_LEVELS, API_LOGS, START_TIME, END_TIME, SERVICE_LOGS, ERROR_LOGS, \
     TIME_ELAPSED, LOG_DATE
 
@@ -15,8 +16,7 @@ class Escalite:
     Escalite is a Python library for per-request logging using contextvars.
     """
 
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    notifiers = None
 
     @staticmethod
     def start_logging():
@@ -119,10 +119,11 @@ class Escalite:
 
     # function using contextmanager to start and end logging automatically
     @contextmanager
-    def logging_context(self):
+    def logging_context(self, configs: dict):
         """
         Context manager to automatically start and end logging.
         """
+        self.set_notifiers_from_configs(configs)
         self.start_logging()
         try:
             yield
@@ -130,3 +131,26 @@ class Escalite:
             self.end_logging()
             # Here you can process the logs, e.g., save to a file or send to a server
             print("Logs collected:", Escalite.get_all_logs())  # For demonstration purposes
+            self.escalate()
+
+    @staticmethod
+    def set_notifiers_from_configs(configs: dict):
+        """
+        Sets the notifiers based on the provided configuration.
+        """
+        Escalite.notifiers = NotifierFactory.create_notifiers(configs)
+
+    @staticmethod
+    def escalate():
+        """
+        Placeholder for the escalate method.
+        This can be used to trigger notifications or other actions based on the logs.
+        """
+        logs = Escalite.get_all_logs()
+        if logs:
+            message = "Escalation triggered with logs: " + str(logs)
+            data = {"logs": logs}
+            if Escalite.notifiers is None:
+                raise RuntimeError("No notifiers set. Call set_notifiers_from_configs() first.")
+            NotifierFactory.notify(Escalite.notifiers, message, data)
+            print("Escalation completed with message:", message)

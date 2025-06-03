@@ -1,13 +1,18 @@
 import pytest
 from escalite.escalite import Escalite
-
+from pytest_mock import mocker
 
 class TestEscalite:
-
-    def test_escalite_initialization(self):
-        api_key = "test_api_key"
-        escalite_instance = Escalite(api_key)
-        assert escalite_instance.api_key == api_key
+    @pytest.fixture(scope="class")
+    def configs(self):
+        return {
+            "notifiers": [
+                {"type": "slack", "config": {"webhook_url": "https://hooks.slack.com/..."}},
+                {"type": "telegram", "config": {"bot_token": "xxx", "chat_id": "yyy"}},
+                {"type": "whatsapp", "config": {"api_url": "http://api", "token": "abc", "to": "+123"}},
+                {"type": "email", "config": {"smtp_server": "smtp.example.com", "to": "user@example.com"}}
+            ]
+        }
 
     def test_start_logging(self):
         Escalite.start_logging()
@@ -89,9 +94,10 @@ class TestEscalite:
         with pytest.raises(RuntimeError):
             Escalite.end_logging()
 
-    def test_logging_context_starts_and_ends_logging(self, capsys):
-        escalite = Escalite(api_key="dummy_key")
-        with escalite.logging_context():
+    def test_logging_context_starts_and_ends_logging(self, capsys, configs, mocker):
+        escalite = Escalite()
+        mocker.patch.object(escalite, "escalate", return_value=None)
+        with escalite.logging_context(configs=configs):
             logs = Escalite.get_all_logs()
             assert "log_level" in logs
             assert "log_date" in logs
@@ -103,10 +109,11 @@ class TestEscalite:
         captured = capsys.readouterr()
         assert "Logs collected:" in captured.out
 
-    def test_logging_context_handles_exceptions_gracefully(self, capsys):
-        escalite = Escalite(api_key="dummy_key")
+    def test_logging_context_handles_exceptions_gracefully(self, capsys, configs, mocker):
+        escalite = Escalite()
+        mocker.patch.object(escalite, "escalate", return_value=None)
         with pytest.raises(ValueError):
-            with escalite.logging_context():
+            with escalite.logging_context(configs=configs):
                 raise ValueError("Test exception")
         logs = Escalite.get_all_logs()
         assert "time_elapsed" in logs

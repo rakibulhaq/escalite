@@ -1,6 +1,6 @@
 # Contributing to This Project
 
-Thank you for your interest in contributing! We welcome enhancements, bug fixes, and new features. Please follow these steps to make your contribution as smooth as possible.
+Thank you for your interest in contributing! We welcome enhancements, bug fixes, or new features. Please follow these steps to make your contribution as smooth as possible.
 
 ## 1. Create an Issue
 

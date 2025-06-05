@@ -2,7 +2,6 @@ import logging
 
 import pytest
 from escalite.escalite import Escalite
-from pytest_mock import mocker
 
 
 class TestEscalite:

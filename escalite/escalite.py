@@ -1,3 +1,4 @@
+import logging
 import time
 import contextvars
 from contextlib import contextmanager
@@ -18,6 +19,8 @@ from escalite.utils.constants import (
 
 # Context variable for per-request logs
 _request_logs = contextvars.ContextVar("_request_logs", default=None)
+
+logger = logging.getLogger(__name__)
 
 
 class Escalite:
@@ -68,7 +71,15 @@ class Escalite:
         extras: dict = None,
     ) -> None:
         """
-        Adds a key-value pair to the per-request log.
+        Adds a log entry to the current request's logs.
+        Args:
+            key (str): The key for the log entry.
+            value (Any): The value associated with the key.
+            tag (str, optional): The log section (e.g., API, service, error). Defaults to None.
+            code (int, optional): An optional code to associate with the log entry. Defaults to None.
+            message (str, optional): An optional message for the log entry. Defaults to None.
+            level (LOG_LEVEL, optional): The log level (e.g., info, warning, error). Defaults to "info".
+            extras (dict, optional): Additional data to include in the log entry. Defaults to None.
         """
         logs = _request_logs.get()
         if logs is None:
@@ -86,10 +97,13 @@ class Escalite:
                 **(extras or {}),
             }
             logs[tag].setdefault(START_TIME, current_time)
-            logs[tag].setdefault(END_TIME, current_time)
-            logs[tag].setdefault(
-                TIME_ELAPSED, logs[tag][END_TIME] - logs[tag][START_TIME]
-            )
+            # Set only if START_TIME is already set, otherwise it will be set later
+            if START_TIME in logs[tag]:
+                logs[tag].setdefault(END_TIME, current_time)
+                logs[tag].setdefault(
+                    TIME_ELAPSED, logs[tag][END_TIME] - logs[tag][START_TIME]
+                )
+
         else:
             logs[key] = {
                 "value": value,
@@ -157,7 +171,7 @@ class Escalite:
 
     # function using contextmanager to start and end logging automatically
     @contextmanager
-    def logging_context(self, configs: dict):
+    def logging_context(self, configs: dict, log_level: LOG_LEVEL = "info"):
         """
         Context manager to automatically start and end logging.
         """
@@ -168,10 +182,10 @@ class Escalite:
         finally:
             self.end_logging()
             # Here you can process the logs, e.g., save to a file or send to a server
-            print(
-                "Logs collected:", Escalite.get_all_logs()
+            logger.info(
+                f"Logs collected:  {Escalite.get_all_logs()}"
             )  # For demonstration purposes
-            self.escalate()
+            self.escalate(from_level=log_level)
 
     @staticmethod
     def set_notifiers_from_configs(configs: dict):
@@ -181,18 +195,33 @@ class Escalite:
         Escalite.notifiers = NotifierFactory.create_notifiers(configs)
 
     @staticmethod
-    def escalate():
+    def escalate(message: str = None, from_level: LOG_LEVEL = "error"):
         """
         Placeholder for the escalate method.
         This can be used to trigger notifications or other actions based on the logs.
         """
-        logs = Escalite.get_all_logs()
-        if logs:
-            message = "Escalation triggered with logs: " + str(logs)
-            data = {"logs": logs}
-            if Escalite.notifiers is None:
-                raise RuntimeError(
-                    "No notifiers set. Call set_notifiers_from_configs() first."
-                )
-            NotifierFactory.notify(Escalite.notifiers, message, data)
-            print("Escalation completed with message:", message)
+        log_data = Escalite.get_all_logs()
+
+        if not log_data:
+            logger.info("No logs to escalate.")
+            return
+
+        if not any(
+            LOG_LEVELS[log.get("level", "info")] >= LOG_LEVELS[from_level]
+            for log in log_data.get(API_LOGS, {}).values()
+        ):
+            logger.info("No logs to escalate based on the specified level.")
+            return
+
+        message = (
+            message
+            if message
+            else "Escalation triggered: "
+            + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        )
+        if Escalite.notifiers is None:
+            raise RuntimeError(
+                "No notifiers set. Call set_notifiers_from_configs() first."
+            )
+        NotifierFactory.notify(Escalite.notifiers, message, log_data)
+        logger.info(f"Escalation completed with data: {log_data}")

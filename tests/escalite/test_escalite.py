@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 from escalite.escalite import Escalite
 from pytest_mock import mocker
@@ -124,8 +126,9 @@ class TestEscalite:
         with pytest.raises(RuntimeError):
             Escalite.end_logging()
 
-    def test_logging_context_starts_and_ends_logging(self, capsys, configs, mocker):
+    def test_logging_context_starts_and_ends_logging(self, caplog, configs, mocker):
         escalite = Escalite()
+        caplog.set_level(logging.INFO, logger="escalite.escalite")
         mocker.patch.object(escalite, "escalate", return_value=None)
         with escalite.logging_context(configs=configs):
             logs = Escalite.get_all_logs()
@@ -136,13 +139,13 @@ class TestEscalite:
         logs = Escalite.get_all_logs()
         assert "time_elapsed" in logs
         assert logs.get("end_time") is not None
-        captured = capsys.readouterr()
-        assert "Logs collected:" in captured.out
+        assert any("Logs collected:" in record.message for record in caplog.records)
 
     def test_logging_context_handles_exceptions_gracefully(
-        self, capsys, configs, mocker
+        self, caplog, configs, mocker
     ):
         escalite = Escalite()
+        caplog.set_level(logging.INFO, logger="escalite.escalite")
         mocker.patch.object(escalite, "escalate", return_value=None)
         with pytest.raises(ValueError):
             with escalite.logging_context(configs=configs):
@@ -150,5 +153,40 @@ class TestEscalite:
         logs = Escalite.get_all_logs()
         assert "time_elapsed" in logs
         assert logs.get("end_time") is not None
-        captured = capsys.readouterr()
-        assert "Logs collected:" in captured.out
+        assert any("Logs collected:" in record.message for record in caplog.records)
+
+    def test_escalite_get_all_logs_empty(self):
+        Escalite.start_logging()
+        Escalite.end_logging()
+        logs = Escalite.get_all_logs()
+        assert logs == {
+            "log_level": "info",
+            "start_time": logs["start_time"],
+            "end_time": logs["end_time"],
+            "log_date": logs["log_date"],
+            "time_elapsed": logs["time_elapsed"],
+            "api_logs": {},
+            "service_logs": {},
+            "error_logs": {},
+        }
+
+    def test_escalate_from_level(self, mocker):
+        escalite = Escalite()
+        mocker.patch.object(escalite, "escalate", return_value=None)
+        escalite.escalate(from_level="error")
+        escalite.escalate(from_level="info")
+        escalite.escalate(from_level="debug")
+        escalite.escalate(from_level="critical")
+
+        # Ensure escalate was called with the correct log level
+        assert escalite.escalate.call_count == 4
+
+    def test_escalate_with_message(self, mocker):
+        escalite = Escalite()
+        mocker.patch.object(escalite, "escalate", return_value=None)
+        escalite.escalate(message="Test escalation", from_level="error")
+
+        # Ensure escalate was called with the correct message
+        escalite.escalate.assert_called_with(
+            message="Test escalation", from_level="error"
+        )

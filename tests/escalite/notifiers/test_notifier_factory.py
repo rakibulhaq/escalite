@@ -26,8 +26,14 @@ def test_notify_factory_calls_all():
 def test_create_notifiers():
     config = {
         "notifiers": [
-            {"type": "slack", "config": {"webhook_url": "https://hooks.slack.com/services/xxx"}},
-            {"type": "whatsapp", "config": {"api_url": "http://api", "token": "abc", "to": "+123"}}
+            {
+                "type": "slack",
+                "config": {"webhook_url": "https://hooks.slack.com/services/xxx"},
+            },
+            {
+                "type": "whatsapp",
+                "config": {"api_url": "http://api", "token": "abc", "to": "+123"},
+            },
         ]
     }
     notifiers = NotifierFactory.create_notifiers(config)

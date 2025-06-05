@@ -8,10 +8,4 @@ ERROR_LOGS = "error_logs"
 TIME_ELAPSED = "time_elapsed"
 LOG_DATE = "log_date"
 LOG_LEVEL = Literal["info", "warning", "error", "debug", "critical"]
-LOG_LEVELS = {
-    "info": 20,
-    "warning": 30,
-    "error": 40,
-    "debug": 10,
-    "critical": 50
-}
+LOG_LEVELS = {"info": 20, "warning": 30, "error": 40, "debug": 10, "critical": 50}

@@ -12,4 +12,6 @@ def test_dict_table_formatter():
         "Country | Wonderland"
     )
     result = formatter.format(data)
-    assert [line.rstrip() for line in result.splitlines()] == [line.rstrip() for line in expected.splitlines()]
+    assert [line.rstrip() for line in result.splitlines()] == [
+        line.rstrip() for line in expected.splitlines()
+    ]

@@ -9,7 +9,7 @@ class DictTableFormatter(Formatter):
         val_width = max(len(str(v)) for v in data.values())
         lines = [
             f"{'Key'.ljust(key_width)} | {'Value'.ljust(val_width)}",
-            f"{'-' * key_width}-+-{'-' * val_width}"
+            f"{'-' * key_width}-+-{'-' * val_width}",
         ]
         for k, v in data.items():
             lines.append(f"{str(k).ljust(key_width)} | {str(v).ljust(val_width)}")

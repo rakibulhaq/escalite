@@ -16,7 +16,7 @@ def test_set_config(email_notifier):
         "sender_email": "sender@example.com",
         "sender_password": "password",
         "recipient_emails": ["recipient@example.com"],
-        "use_tls": True
+        "use_tls": True,
     }
     email_notifier.set_config(config)
     assert email_notifier.config == config
@@ -35,7 +35,7 @@ def test_notify_sends_email(mock_smtp, email_notifier):
         "sender_email": "sender@example.com",
         "sender_password": "password",
         "recipient_emails": ["recipient@example.com"],
-        "use_tls": True
+        "use_tls": True,
     }
     email_notifier.set_config(config)
     mock_server = MagicMock()

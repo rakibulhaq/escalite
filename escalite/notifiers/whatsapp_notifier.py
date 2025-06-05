@@ -7,7 +7,9 @@ from escalite.notifiers.base_notifier import BaseNotifier
 
 class WhatsAppNotifier(BaseNotifier):
 
-    def __init__(self, config: dict = None, formatter: Formatter = DictTableFormatter()):
+    def __init__(
+        self, config: dict = None, formatter: Formatter = DictTableFormatter()
+    ):
         self.config = config
         self.formatter = formatter
 
@@ -23,10 +25,8 @@ class WhatsAppNotifier(BaseNotifier):
             raise ValueError("Config not set")
         payload = {
             "to": self.config["to"],
-            "message": f"{message}\n{self.formatter.format(data)}"
+            "message": f"{message}\n{self.formatter.format(data)}",
         }
-        headers = {
-            "Authorization": f"Bearer {self.config['token']}"
-        }
+        headers = {"Authorization": f"Bearer {self.config['token']}"}
         response = requests.post(self.config["api_url"], json=payload, headers=headers)
         response.raise_for_status()

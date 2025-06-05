@@ -6,7 +6,9 @@ from escalite.formatters.dict_table_formatter import DictTableFormatter
 
 
 class TelegramNotifier(BaseNotifier):
-    def __init__(self, config: dict = None, formatter: Formatter = DictTableFormatter()):
+    def __init__(
+        self, config: dict = None, formatter: Formatter = DictTableFormatter()
+    ):
         self.config = config
         self.formatter = formatter
 
@@ -28,9 +30,6 @@ class TelegramNotifier(BaseNotifier):
             body += "\n\n" + self.formatter.format(data)
 
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        payload = {
-            "chat_id": chat_id,
-            "text": body
-        }
+        payload = {"chat_id": chat_id, "text": body}
         resp = requests.post(url, data=payload)
         resp.raise_for_status()

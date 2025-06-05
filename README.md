@@ -2,6 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/escalite.svg)](https://pypi.org/project/escalite/)
 [![Python versions](https://img.shields.io/pypi/pyversions/escalite.svg)](https://pypi.org/project/escalite/)
+[![codecov](https://codecov.io/gh/rakibulhaq/escalite/branch/main/graph/badge.svg)](https://codecov.io/gh/rakibulhaq/escalite)
 
 A Python library for per-request logging and escalation, designed for API services.
 

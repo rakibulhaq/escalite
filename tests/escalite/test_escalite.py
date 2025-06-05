@@ -133,7 +133,9 @@ class TestEscalite:
         Escalite.add_service_log(
             "oauth_service", "message from service", url="/login", code=201
         )
-        Escalite.add_service_log("oauth_service", "another message", url="/logout", code=200)
+        Escalite.add_service_log(
+            "oauth_service", "another message", url="/logout", code=200
+        )
         Escalite.end_logging()
         logs = Escalite.get_all_logs()
         assert "start_time" in logs["service_logs"]["oauth_service"]

@@ -88,21 +88,48 @@ class Escalite:
             )
         if tag:
             current_time = time.time()
-            logs[tag][key] = {
-                "value": value,
-                "code": code,
-                "message": message,
-                "level": Escalite.set_log_level(level, tag=tag),
-                "log_time": current_time,
-                **(extras or {}),
-            }
-            logs[tag].setdefault(START_TIME, current_time)
-            # Set only if START_TIME is already set, otherwise it will be set later
-            if START_TIME in logs[tag]:
-                logs[tag].setdefault(END_TIME, current_time)
-                logs[tag].setdefault(
-                    TIME_ELAPSED, logs[tag][END_TIME] - logs[tag][START_TIME]
+            # check if the key already exists in the logs for the given tag
+            # if it does, we will update the existing log entry
+            # otherwise, we will create a new one
+            if tag not in logs:
+                logs[tag] = {}
+            if key in logs[tag]:
+                # If the key already exists, we update the existing log entry
+                logs[tag][key]["value"] = value
+                logs[tag][key]["code"] = code
+                logs[tag][key]["message"] = message
+                logs[tag][key]["level"] = Escalite.set_log_level(level, tag=tag)
+                logs[tag][key]["log_time"] = current_time
+                logs[tag][key].setdefault(START_TIME, current_time)
+                logs[tag][key].setdefault(END_TIME, current_time)
+                logs[tag][key].setdefault(
+                    TIME_ELAPSED, logs[tag][key][END_TIME] - logs[tag][key][START_TIME]
                 )
+            else:
+                # If the key does not exist, we create a new log entry
+                logs[tag][key] = {
+                    "value": value,
+                    "code": code,
+                    "message": message,
+                    "level": Escalite.set_log_level(level, tag=tag),
+                    "log_time": current_time,
+                    **(extras or {}),
+                }
+
+            # If START_TIME is already set, we update END_TIME and TIME_ELAPSED
+            # to reflect the current time
+            # This is useful for cases where the log entry is updated multiple times
+            # during the request lifecycle, and we want to keep track of the latest timing.
+            # If START_TIME is not set, it will be set later when the log entry is created
+            # or updated.
+
+            if START_TIME in logs[tag][key]:
+                logs[tag][key].setdefault(END_TIME, current_time)
+                logs[tag][key].setdefault(
+                    TIME_ELAPSED, logs[tag][key][END_TIME] - logs[tag][key][START_TIME]
+                )
+
+            logs[tag][key].setdefault(START_TIME, current_time)
 
         else:
             logs[key] = {

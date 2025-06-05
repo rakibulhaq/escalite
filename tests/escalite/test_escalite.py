@@ -119,6 +119,26 @@ class TestEscalite:
         assert entry["message"] == "message from service"
         Escalite.end_logging()
 
+    def test_add_service_log_with_end_time(self):
+        Escalite.start_logging()
+        Escalite.add_service_log(
+            "oauth_service", "message from service", url="/login", code=201
+        )
+        logs = Escalite.get_all_logs()
+        assert "start_time" in logs["service_logs"]["oauth_service"]
+        assert "end_time" not in logs["service_logs"]["oauth_service"]
+
+    def test_add_service_log_with_end_time_when_start_time_is_set(self):
+        Escalite.start_logging()
+        Escalite.add_service_log(
+            "oauth_service", "message from service", url="/login", code=201
+        )
+        Escalite.add_service_log("oauth_service", "another message", url="/logout", code=200)
+        Escalite.end_logging()
+        logs = Escalite.get_all_logs()
+        assert "start_time" in logs["service_logs"]["oauth_service"]
+        assert "end_time" in logs["service_logs"]["oauth_service"]
+
     def test_end_logging_without_start(self):
         from escalite.escalite import _request_logs
 

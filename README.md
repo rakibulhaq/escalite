@@ -105,6 +105,40 @@ Escalite.escalate()
 
 This example shows explicit control over the logging lifecycle and escalation, suitable for use outside of context managers or in custom workflows.
 
+## Usage Example - Service Call Logging
+
+We can use `start_service_log` and `stop_service_log` to track the lifecycle of a service call:
+
+```python
+from escalite import Escalite
+
+# Start logging for the request
+Escalite.start_logging()
+
+# Log the start of a service call
+Escalite.start_service_log(
+    "oauth_service",
+    "Starting OAuth service",
+    url="/oauth/start",
+    code=200
+)
+
+# ... your service logic here ...
+
+# Log the end of a service call
+Escalite.stop_service_log(
+    "oauth_service",
+    "OAuth service completed",
+    url="/oauth/start",
+    code=200
+)
+
+# End logging and retrieve logs
+Escalite.end_logging()
+logs = Escalite.get_all_logs()
+print(logs)
+```
+
 **Notifiers**
 
 Here are some notifier configuration examples that are currently supported. Replace the configuration values with your actual credentials or endpoints.

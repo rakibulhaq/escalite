@@ -236,3 +236,39 @@ class TestEscalite:
         assert entry["value"] == "initial_value"
         assert entry["code"] == 200
         assert entry["message"] == "Initial message"
+
+    def test_start_service_log(self):
+        Escalite.start_logging()
+        Escalite.start_service_log(
+            "oauth_service", "Starting service", url="/start", code=200
+        )
+        Escalite.end_logging()
+        logs = Escalite.get_all_logs()
+        assert "oauth_service" in logs["service_logs"]
+        entry = logs["service_logs"]["oauth_service"]
+        assert entry["url"] == "/start"
+        assert entry["code"] == 200
+        assert entry["message"] == "Starting service"
+        assert "start_time" in entry
+        assert "end_time" not in entry
+
+    def test_stop_service_log(self):
+        Escalite.start_logging()
+        Escalite.start_service_log(
+            "oauth_service", "Starting service", url="/start", code=200
+        )
+        Escalite.stop_service_log(
+            "oauth_service", "Stopping service", url="/stop", code=500, error_trace="Traceback"
+        )
+        Escalite.end_logging()
+        logs = Escalite.get_all_logs()
+
+        assert "oauth_service" in logs["service_logs"]
+        entry = logs["service_logs"]["oauth_service"]
+        assert entry["url"] == "/stop"
+        assert entry["code"] == 500
+        assert entry["message"] == "Stopping service"
+        assert entry["error_trace"] == "Traceback"
+        assert "start_time" in entry
+        assert "end_time" in entry
+

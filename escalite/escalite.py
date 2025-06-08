@@ -95,9 +95,11 @@ class Escalite:
                 logs[tag] = {}
             if key in logs[tag]:
                 # If the key already exists, we update the existing log entry
-                logs[tag][key]["value"] = value
-                logs[tag][key]["code"] = code
-                logs[tag][key]["message"] = message
+                logs[tag][key]["value"] = value or logs[tag][key].get("value", None)
+                logs[tag][key]["code"] = code or logs[tag][key].get("code", None)
+                logs[tag][key]["message"] = message or logs[tag][key].get(
+                    "message", None
+                )
                 logs[tag][key]["level"] = Escalite.set_log_level(level, tag=tag)
                 logs[tag][key]["log_time"] = current_time
                 logs[tag][key].setdefault(START_TIME, current_time)

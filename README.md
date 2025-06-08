@@ -194,6 +194,9 @@ Escalite.escalate()
 - Per-request logging using contextvars
 - Pluggable notifiers (email, etc.)
 - Easy integration with FastAPI and other frameworks
+## Contributing
+
+Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines.
 
 ## License
 

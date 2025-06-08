@@ -111,7 +111,9 @@ class Escalite:
                 logs[tag][key].setdefault(
                     TIME_ELAPSED, logs[tag][key][END_TIME] - logs[tag][key][START_TIME]
                 )
-                logs[tag][key].update(extras or {})
+                reserved_keys = {START_TIME, END_TIME, TIME_ELAPSED}
+                filtered_extras = {k: v for k, v in (extras or {}).items() if k not in reserved_keys}
+                logs[tag][key].update(filtered_extras)
             else:
                 # If the key does not exist, we create a new log entry
                 logs[tag][key] = {

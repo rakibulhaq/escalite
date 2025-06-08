@@ -211,3 +211,28 @@ class TestEscalite:
         escalite.escalate.assert_called_with(
             message="Test escalation", from_level="error"
         )
+
+    def test_add_to_log_does_not_overwrite_existing_key_if_not_passed(self):
+        Escalite.start_logging()
+        Escalite.add_to_log(
+            "test_key",
+            "initial_value",
+            tag="api_logs",
+            code=200,
+            message="Initial message",
+            level="info",
+        )
+        Escalite.add_to_log(
+            "test_key",
+            None,  # This should not overwrite the existing value
+            tag="api_logs",
+            code=None,  # This should not overwrite the existing value
+            message=None,  # This should not overwrite the existing value
+            level="warning",
+        )
+        logs = Escalite.get_all_logs()
+        entry = logs["api_logs"]["test_key"]
+
+        assert entry["value"] == "initial_value"
+        assert entry["code"] == 200
+        assert entry["message"] == "Initial message"

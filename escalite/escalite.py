@@ -111,6 +111,7 @@ class Escalite:
                 logs[tag][key].setdefault(
                     TIME_ELAPSED, logs[tag][key][END_TIME] - logs[tag][key][START_TIME]
                 )
+                logs[tag][key].update(extras or {})
             else:
                 # If the key does not exist, we create a new log entry
                 logs[tag][key] = {
@@ -199,6 +200,43 @@ class Escalite:
             tag=SERVICE_LOGS,
             level=level,
             extras={"url": url},
+            code=code,
+        )
+
+    @staticmethod
+    def start_service_log(
+            service_name: str,
+            message: str,
+            level: LOG_LEVEL = "info",
+            url: str = None,
+            code: int = None,
+    ) -> None:
+        Escalite.add_to_log(
+            service_name,
+            value=None,
+            message=message,
+            tag=SERVICE_LOGS,
+            level=level,
+            extras={"url": url},
+            code=code,
+        )
+
+    @staticmethod
+    def stop_service_log(
+            service_name: str,
+            message: str,
+            level: LOG_LEVEL = "info",
+            url: str = None,
+            code: int = None,
+            error_trace: str = None,
+    ) -> None:
+        Escalite.add_to_log(
+            service_name,
+            value=None,
+            message=message,
+            tag=SERVICE_LOGS,
+            level=level,
+            extras={"url": url} if error_trace is None else {"url": url, "error_trace": error_trace},
             code=code,
         )
 

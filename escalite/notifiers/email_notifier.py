@@ -16,20 +16,18 @@ class EmailNotifier(BaseNotifier):
         self.formatter = formatter
 
     def set_config(self, config: dict):
-        # Expected keys: smtp_server, smtp_port, sender_email
-        if not all(
-            key in config
-            for key in [
-                "smtp_server",
-                "smtp_port",
-                "sender_email",
-                "sender_password",
-                "recipient_emails",
-            ]
-        ):
+        # Expected keys: smtp_server, smtp_port, sender_email, sender_password, recipient_emails
+        required_keys = [
+            "smtp_server",
+            "smtp_port",
+            "sender_email",
+            "sender_password",
+            "recipient_emails",
+        ]
+        missing_keys = [key for key in required_keys if key not in config]
+        if missing_keys:
             raise ValueError(
-                "Missing required config keys: smtp_server, smtp_port, sender_email, sender_password, "
-                "recipient_emails"
+                f"Missing required config keys: {', '.join(missing_keys)}"
             )
         # sender_password, recipient_emails (list or str), use_tls (bool)
         self.config = config

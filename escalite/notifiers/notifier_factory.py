@@ -31,3 +31,11 @@ class NotifierFactory:
     def notify(notifiers: List[BaseNotifier], message: str, data: dict):
         for notifier in notifiers:
             notifier.notify(message=message, data=data)
+
+    @staticmethod
+    def add_notifier_map(notifier_type: str, notifier_cls: type):
+        if not issubclass(notifier_cls, BaseNotifier):
+            raise ValueError(
+                f"Notifier class {notifier_cls} must inherit from BaseNotifier"
+            )
+        NotifierFactory.NOTIFIER_MAP[notifier_type] = notifier_cls

@@ -1,4 +1,6 @@
 import logging
+import threading
+import time
 
 import pytest
 from escalite.escalite import Escalite
@@ -258,7 +260,11 @@ class TestEscalite:
             "oauth_service", "Starting service", url="/start", code=200
         )
         Escalite.stop_service_log(
-            "oauth_service", "Stopping service", url="/stop", code=500, error_trace="Traceback"
+            "oauth_service",
+            "Stopping service",
+            url="/stop",
+            code=500,
+            error_trace="Traceback",
         )
         Escalite.end_logging()
         logs = Escalite.get_all_logs()
@@ -272,3 +278,27 @@ class TestEscalite:
         assert "start_time" in entry
         assert "end_time" in entry
 
+    @pytest.fixture
+    def simulate_request(self):
+        def _simulate_request(log_value, result_list, idx):
+            Escalite.start_logging()
+            Escalite.add_to_log("api_call", log_value, tag="api_logs")
+            time.sleep(0.1)
+            logs = Escalite.end_logging()
+            result_list[idx] = logs["api_logs"]["api_call"]["value"]
+
+        return _simulate_request
+
+    def test_contextvar_is_isolated_across_threads(self, simulate_request):
+        num_threads = 5
+        results = [None] * num_threads
+        threads = []
+        for i in range(num_threads):
+            t = threading.Thread(
+                target=simulate_request, args=(f"value_{i}", results, i)
+            )
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        assert results == [f"value_{i}" for i in range(num_threads)]

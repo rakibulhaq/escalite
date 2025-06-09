@@ -278,15 +278,18 @@ class TestEscalite:
         assert "start_time" in entry
         assert "end_time" in entry
 
-    def simulate_request(self, log_value, result_list, idx):
-        Escalite.start_logging()
-        Escalite.add_to_log("api_call", log_value, tag="api_logs")
-        # Sleep to simulate work and possible context switch
-        time.sleep(0.1)
-        logs = Escalite.end_logging()
-        result_list[idx] = logs["api_logs"]["api_call"]["value"]
+    @pytest.fixture
+    def simulate_request(self):
+        def _simulate_request(log_value, result_list, idx):
+            Escalite.start_logging()
+            Escalite.add_to_log("api_call", log_value, tag="api_logs")
+            time.sleep(0.1)
+            logs = Escalite.end_logging()
+            result_list[idx] = logs["api_logs"]["api_call"]["value"]
 
-    def contextvar_is_isolated_across_threads(self, simulate_request):
+        return _simulate_request
+
+    def test_contextvar_is_isolated_across_threads(self, simulate_request):
         num_threads = 5
         results = [None] * num_threads
         threads = []

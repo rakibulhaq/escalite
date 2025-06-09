@@ -71,5 +71,6 @@ def test_add_notifier_map_invalid_notifier_type():
     except ValueError as e:
         assert (
             str(e)
-            == "Notifier class <class 'InvalidNotifier'> must inherit from BaseNotifier"
+            == "Notifier class <class 'tests.escalite.notifiers.test_notifier_factory"
+            ".test_add_notifier_map_invalid_notifier_type.<locals>.InvalidNotifier'> must inherit from BaseNotifier"
         )

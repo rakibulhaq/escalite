@@ -49,7 +49,7 @@ class EmailNotifier(BaseNotifier):
             recipient_emails = [recipient_emails]
 
         subject = data.get("subject", "Notification")
-        body = message + "\n\n" + self.formatter.format(data) if data else ""
+        body = message + ("\n\n" + self.formatter.format(data) if data else "")
 
         msg = MIMEMultipart()
         msg["From"] = sender_email

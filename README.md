@@ -149,10 +149,15 @@ Here are some notifier configuration examples that are currently supported. Repl
 from escalite.escalite import Escalite
 
 notifier_configs = {
-    "telegram": {
-        "bot_token": "your-telegram-bot-token",
-        "chat_id": "your-chat-id"
-    }
+    "notifiers": [
+        {
+            "type": "telegram",
+            "config": {
+                "bot_token": "your-telegram-bot-token",
+                "chat_id": "your-chat-id"
+            }
+        }
+    ]
 }
 
 Escalite.set_notifiers_from_configs(notifier_configs)
@@ -168,11 +173,16 @@ Escalite.escalate()
 from escalite.escalite import Escalite
 
 notifier_configs = {
-    "whatsapp": {
-        "api_url": "https://your-whatsapp-api-endpoint.com/send",
-        "access_token": "your-access-token",
-        "phone_number": "recipient-phone-number"
-    }
+    "notifiers": [
+        {
+            "type": "whatsapp",
+            "config": {
+                "api_url": "https://your-whatsapp-api-endpoint.com/send",
+                "access_token": "your-access-token",
+                "phone_number": "recipient-phone-number"
+            }
+        }
+    ]
 }
 
 Escalite.set_notifiers_from_configs(notifier_configs)
@@ -188,9 +198,14 @@ Escalite.escalate()
 from escalite.escalite import Escalite
 
 notifier_configs = {
-    "slack": {
-        "webhook_url": "https://hooks.slack.com/services/your/webhook/url"
-    }
+    "notifiers": [
+        {
+            "type": "slack",
+            "config": {
+                "webhook_url": "https://hooks.slack.com/services/your/webhook/url"
+            }
+        }
+    ]
 }
 
 Escalite.set_notifiers_from_configs(notifier_configs)
@@ -205,18 +220,23 @@ Escalite.escalate()
 ```python
 from escalite.escalite import Escalite
 
-notifier_configs = {
-    "email": {
-        "smtp_server": "smtp.example.com",
-        "smtp_port": 587,
-        "sender_email": "your@email.com",
-        "sender_password": "yourpassword",
-        "recipient_emails": ["admin@example.com"],
-        "use_tls": True
-    }
+otifier_configs = {
+    "notifiers": [
+        {
+            "type": "email",
+            "config": {
+                "smtp_server": "smtp.example.com",
+                "smtp_port": 587,
+                "sender_email": "your@email.com",
+                "sender_password": "yourpassword",
+                "recipient_emails": ["admin@example.com"],
+                "use_tls": True
+            }
+        }
+    ]
 }
 
-Escalite.set_notifiers_from_configs(notifier_configs)
+Escalite.set_notifiers_from_configs(otifier_configs)
 Escalite.start_logging()
 Escalite.add_to_log("event", "Email notifier test", tag="api_logs")
 Escalite.end_logging()

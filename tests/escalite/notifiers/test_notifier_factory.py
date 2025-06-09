@@ -1,3 +1,4 @@
+from escalite.notifiers.base_notifier import BaseNotifier
 from escalite.notifiers.notifier_factory import NotifierFactory
 
 
@@ -34,9 +35,41 @@ def test_create_notifiers():
                 "type": "whatsapp",
                 "config": {"api_url": "http://api", "token": "abc", "to": "+123"},
             },
+            {
+                "type": "telegram",
+                "config": {"bot_token": "xxx", "chat_id": "yyy"},
+            },
         ]
     }
     notifiers = NotifierFactory.create_notifiers(config)
-    assert len(notifiers) == 2
+    assert len(notifiers) == 3
     assert isinstance(notifiers[0], NotifierFactory.NOTIFIER_MAP["slack"])
     assert isinstance(notifiers[1], NotifierFactory.NOTIFIER_MAP["whatsapp"])
+    assert isinstance(notifiers[2], NotifierFactory.NOTIFIER_MAP["telegram"])
+
+
+def add_notifier_map_valid_notifier_type():
+    class MockNotifier(BaseNotifier):
+        def set_config(self, config: dict):
+            pass
+
+        def notify(self, message: str, data: dict):
+            pass
+
+    NotifierFactory.add_notifier_map("mock", MockNotifier)
+    assert "mock" in NotifierFactory.NOTIFIER_MAP
+    assert NotifierFactory.NOTIFIER_MAP["mock"] == MockNotifier
+
+
+def add_notifier_map_invalid_notifier_type():
+    class InvalidNotifier:
+        def notify(self, message: str, data: dict):
+            pass
+
+    try:
+        NotifierFactory.add_notifier_map("invalid", InvalidNotifier)
+    except ValueError as e:
+        assert (
+            str(e)
+            == "Notifier class <class 'InvalidNotifier'> must inherit from BaseNotifier"
+        )

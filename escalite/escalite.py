@@ -104,7 +104,7 @@ class Escalite:
                 logs[tag][key]["message"] = (
                     message if message is not None else logs[tag][key].get("message")
                 )
-                logs[tag][key]["level"] = Escalite.set_log_level(level, tag=tag)
+                logs[tag][key]["log_level"] = Escalite.set_log_level(level, tag=tag)
                 logs[tag][key]["log_time"] = current_time
                 logs[tag][key].setdefault(START_TIME, current_time)
                 logs[tag][key].setdefault(END_TIME, current_time)
@@ -112,7 +112,9 @@ class Escalite:
                     TIME_ELAPSED, logs[tag][key][END_TIME] - logs[tag][key][START_TIME]
                 )
                 reserved_keys = {START_TIME, END_TIME, TIME_ELAPSED}
-                filtered_extras = {k: v for k, v in (extras or {}).items() if k not in reserved_keys}
+                filtered_extras = {
+                    k: v for k, v in (extras or {}).items() if k not in reserved_keys
+                }
                 logs[tag][key].update(filtered_extras)
             else:
                 # If the key does not exist, we create a new log entry
@@ -120,7 +122,7 @@ class Escalite:
                     "value": value,
                     "code": code,
                     "message": message,
-                    "level": Escalite.set_log_level(level, tag=tag),
+                    "log_level": Escalite.set_log_level(level, tag=tag),
                     "log_time": current_time,
                     **(extras or {}),
                 }
@@ -145,7 +147,7 @@ class Escalite:
                 "value": value,
                 "code": code,
                 "message": message,
-                "level": Escalite.set_log_level(level),
+                "log_level": Escalite.set_log_level(level),
                 "log_time": time.time(),
                 **(extras or {}),
             }
@@ -207,11 +209,11 @@ class Escalite:
 
     @staticmethod
     def start_service_log(
-            service_name: str,
-            message: str,
-            level: LOG_LEVEL = "info",
-            url: str = None,
-            code: int = None,
+        service_name: str,
+        message: str,
+        level: LOG_LEVEL = "info",
+        url: str = None,
+        code: int = None,
     ) -> None:
         Escalite.add_to_log(
             service_name,
@@ -225,12 +227,12 @@ class Escalite:
 
     @staticmethod
     def stop_service_log(
-            service_name: str,
-            message: str,
-            level: LOG_LEVEL = "info",
-            url: str = None,
-            code: int = None,
-            error_trace: str = None,
+        service_name: str,
+        message: str,
+        level: LOG_LEVEL = "info",
+        url: str = None,
+        code: int = None,
+        error_trace: str = None,
     ) -> None:
         Escalite.add_to_log(
             service_name,
@@ -238,7 +240,11 @@ class Escalite:
             message=message,
             tag=SERVICE_LOGS,
             level=level,
-            extras={"url": url} if error_trace is None else {"url": url, "error_trace": error_trace},
+            extras=(
+                {"url": url}
+                if error_trace is None
+                else {"url": url, "error_trace": error_trace}
+            ),
             code=code,
         )
 
@@ -279,9 +285,8 @@ class Escalite:
             logger.info("No logs to escalate.")
             return
 
-        if not any(
-            LOG_LEVELS[log.get("level", "info")] >= LOG_LEVELS[from_level]
-            for log in log_data.get(API_LOGS, {}).values()
+        if not (
+            LOG_LEVELS[log_data.get("log_level", "info")] >= LOG_LEVELS[from_level]
         ):
             logger.info("No logs to escalate based on the specified level.")
             return

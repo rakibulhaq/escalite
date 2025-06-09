@@ -3,15 +3,21 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from escalite.formatters.base_formatter import Formatter
+from escalite.formatters.dict_table_formatter import DictTableFormatter
 from escalite.notifiers.base_notifier import BaseNotifier
 
 
 class EmailNotifier(BaseNotifier):
-    def __init__(self, config: dict = None):
+    def __init__(self, config: dict = None, formatter: Formatter = DictTableFormatter()):
         self.config = config
+        self.formatter = formatter
 
     def set_config(self, config: dict):
-        # Expected keys: smtp_server, smtp_port, sender_email,
+        # Expected keys: smtp_server, smtp_port, sender_email
+        if not all(key in config for key in ["smtp_server", "smtp_port", "sender_email", "sender_password", "recipient_emails"]):
+            raise ValueError("Missing required config keys: smtp_server, smtp_port, sender_email, sender_password, "
+                             "recipient_emails")
         # sender_password, recipient_emails (list or str), use_tls (bool)
         self.config = config
 
@@ -30,7 +36,7 @@ class EmailNotifier(BaseNotifier):
             recipient_emails = [recipient_emails]
 
         subject = data.get("subject", "Notification")
-        body = message
+        body = message + "\n\n" + self.formatter.format(data) if data else ""
 
         msg = MIMEMultipart()
         msg["From"] = sender_email

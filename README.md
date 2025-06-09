@@ -220,7 +220,7 @@ Escalite.escalate()
 ```python
 from escalite.escalite import Escalite
 
-otifier_configs = {
+notifier_configs = {
     "notifiers": [
         {
             "type": "email",

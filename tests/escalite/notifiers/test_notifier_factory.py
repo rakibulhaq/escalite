@@ -48,7 +48,7 @@ def test_create_notifiers():
     assert isinstance(notifiers[2], NotifierFactory.NOTIFIER_MAP["telegram"])
 
 
-def add_notifier_map_valid_notifier_type():
+def test_add_notifier_map_valid_notifier_type():
     class MockNotifier(BaseNotifier):
         def set_config(self, config: dict):
             pass
@@ -61,7 +61,7 @@ def add_notifier_map_valid_notifier_type():
     assert NotifierFactory.NOTIFIER_MAP["mock"] == MockNotifier
 
 
-def add_notifier_map_invalid_notifier_type():
+def test_add_notifier_map_invalid_notifier_type():
     class InvalidNotifier:
         def notify(self, message: str, data: dict):
             pass

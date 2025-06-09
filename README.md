@@ -25,14 +25,19 @@ Configure notifiers (e.g., email) in a dictionary format. Example:
 
 ```python
 notifier_configs = {
-    "email": {
-        "smtp_server": "smtp.example.com",
-        "smtp_port": 587,
-        "sender_email": "your@email.com",
-        "sender_password": "yourpassword",
-        "recipient_emails": ["admin@example.com"],
-        "use_tls": True
-    }
+    "notifiers": [
+        {
+            "type": "email",
+            "config": {
+                "smtp_server": "smtp.example.com",
+                "smtp_port": 587,
+                "sender_email": "your@email.com",
+                "sender_password": "yourpassword",
+                "recipient_emails": ["admin@example.com"],
+                "use_tls": True
+            }
+        }
+    ]
 }
 ```
 
@@ -44,14 +49,19 @@ from escalite.escalite import Escalite
 
 app = FastAPI()
 notifier_configs = {
-    "email": {
-        "smtp_server": "smtp.example.com",
-        "smtp_port": 587,
-        "sender_email": "your@email.com",
-        "sender_password": "yourpassword",
-        "recipient_emails": ["admin@example.com"],
-        "use_tls": True
-    }
+    "notifiers": [
+        {
+            "type": "email",
+            "config": {
+                "smtp_server": "smtp.example.com",
+                "smtp_port": 587,
+                "sender_email": "your@email.com",
+                "sender_password": "yourpassword",
+                "recipient_emails": ["admin@example.com"],
+                "use_tls": True
+            }
+        }
+    ]
 }
 
 @app.middleware("http")
@@ -75,14 +85,19 @@ Here is an additional usage example for showing how to use `Escalite` without th
 from escalite.escalite import Escalite
 
 notifier_configs = {
-    "email": {
-        "smtp_server": "smtp.example.com",
-        "smtp_port": 587,
-        "sender_email": "your@email.com",
-        "sender_password": "yourpassword",
-        "recipient_emails": ["admin@example.com"],
-        "use_tls": True
-    }
+    "notifiers": [
+        {
+            "type": "email",
+            "config": {
+                "smtp_server": "smtp.example.com",
+                "smtp_port": 587,
+                "sender_email": "your@email.com",
+                "sender_password": "yourpassword",
+                "recipient_emails": ["admin@example.com"],
+                "use_tls": True
+            }
+        }
+    ]
 }
 
 # Set up notifiers from configs
@@ -236,7 +251,7 @@ notifier_configs = {
     ]
 }
 
-Escalite.set_notifiers_from_configs(otifier_configs)
+Escalite.set_notifiers_from_configs(notifier_configs)
 Escalite.start_logging()
 Escalite.add_to_log("event", "Email notifier test", tag="api_logs")
 Escalite.end_logging()

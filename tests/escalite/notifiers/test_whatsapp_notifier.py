@@ -44,7 +44,9 @@ def test_notify_sends_request(mock_post, whatsapp_notifier):
     assert args[0] == "http://api"
     assert kwargs["headers"]["Authorization"] == "Bearer abc"
     assert kwargs["json"]["to"] == "+123"
-    assert "Hello" in kwargs["json"]["message"]
+    assert (
+        "Hello" in kwargs["json"]["template"]["components"][0]["parameters"][2]["text"]
+    )
     mock_response.raise_for_status.assert_called_once()
 
 

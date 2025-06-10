@@ -26,9 +26,7 @@ class EmailNotifier(BaseNotifier):
         ]
         missing_keys = [key for key in required_keys if key not in config]
         if missing_keys:
-            raise ValueError(
-                f"Missing required config keys: {', '.join(missing_keys)}"
-            )
+            raise ValueError(f"Missing required config keys: {', '.join(missing_keys)}")
         # sender_password, recipient_emails (list or str), use_tls (bool)
         self.config = config
 

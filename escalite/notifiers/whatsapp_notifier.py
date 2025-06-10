@@ -9,7 +9,7 @@ from escalite.notifiers.base_notifier import BaseNotifier
 
 class WhatsAppNotifier(BaseNotifier):
 
-    _payload_template = payload = {
+    _payload_template = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
         "to": None,

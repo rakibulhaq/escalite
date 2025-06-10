@@ -192,9 +192,44 @@ notifier_configs = {
         {
             "type": "whatsapp",
             "config": {
-                "api_url": "https://your-whatsapp-api-endpoint.com/send",
-                "access_token": "your-access-token",
-                "phone_number": "recipient-phone-number"
+                "api_url": "https://graph.facebook.com/[version]/[phone_number_id]/messages", # Replace with your actual API URL
+                "details_url": "https://escalite.com/escalite-alerts?id=", # Replace with your actual URL, Optional
+                "token": "your-access-token", # Replace with your actual access token
+                "to": "recipient-phone-number", # Replace with the recipient's phone number
+                "payload_template": {
+                    "messaging_product": "whatsapp",
+                    "recipient_type": "individual",
+                    "to": "PHONE_NUMBER", # Will be replaced with the recipient's phone number from above
+                    "type": "template",
+                    "template": {
+                        "name": "TEMPLATE_NAME", # Replace with your actual template name
+                        "language": {
+                            "code": "LANGUAGE_AND_LOCALE_CODE" # Replace with your actual language and locale code, e.g., "en_US"
+                        },
+                        "components": [
+                            # Replace with your named and positional parameter inputs
+                            # Currently we only support the following parameters:
+                            # name, date, message, data
+                            # name, data are optional
+                            # message is the message generated when escalite.escalate() is called
+                            # date is the current date and time when the message is sent, auto generated
+                            # Format the template following this example:
+                            # {
+                                #"type": "body",
+                                #"parameters": [
+                                #    {"type": "text", "parameter_name": "name", "text": ""},
+                                #    {
+                                #        "type": "text",
+                                #        "parameter_name": "date",
+                                #        "text": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                #   },
+                                #   {"type": "text", "parameter_name": "message", "text": None},
+                                #   {"type": "text", "parameter_name": "data", "text": ""},
+                                # ],
+                            # }
+                       ]
+                     }
+                }
             }
         }
     ]

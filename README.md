@@ -192,18 +192,19 @@ notifier_configs = {
         {
             "type": "whatsapp",
             "config": {
-                "api_url": "https://graph.facebook.com/[version]/[phone_number_id]/messages",
-                "token": "your-access-token",
-                "to": "recipient-phone-number",
+                "api_url": "https://graph.facebook.com/[version]/[phone_number_id]/messages", # Replace with your actual API URL
+                "details_url": "https://escalite.com/escalite-alerts?id=", # Replace with your actual URL, Optional
+                "token": "your-access-token", # Replace with your actual access token
+                "to": "recipient-phone-number", # Replace with the recipient's phone number
                 "payload_template": {
                     "messaging_product": "whatsapp",
                     "recipient_type": "individual",
-                    "to": "PHONE_NUMBER",
+                    "to": "PHONE_NUMBER", # Will be replaced with the recipient's phone number from above
                     "type": "template",
                     "template": {
-                        "name": "TEMPLATE_NAME",
+                        "name": "TEMPLATE_NAME", # Replace with your actual template name
                         "language": {
-                            "code": "LANGUAGE_AND_LOCALE_CODE"
+                            "code": "LANGUAGE_AND_LOCALE_CODE" # Replace with your actual language and locale code, e.g., "en_US"
                         },
                         "components": [
                             # Replace with your named and positional parameter inputs

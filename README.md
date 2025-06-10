@@ -192,9 +192,43 @@ notifier_configs = {
         {
             "type": "whatsapp",
             "config": {
-                "api_url": "https://your-whatsapp-api-endpoint.com/send",
-                "access_token": "your-access-token",
-                "phone_number": "recipient-phone-number"
+                "api_url": "https://graph.facebook.com/[version]/[phone_number_id]/messages",
+                "token": "your-access-token",
+                "to": "recipient-phone-number",
+                "payload_template": {
+                    "messaging_product": "whatsapp",
+                    "recipient_type": "individual",
+                    "to": "PHONE_NUMBER",
+                    "type": "template",
+                    "template": {
+                        "name": "TEMPLATE_NAME",
+                        "language": {
+                            "code": "LANGUAGE_AND_LOCALE_CODE"
+                        },
+                        "components": [
+                            # Replace with your named and positional parameter inputs
+                            # Currently we only support the following parameters:
+                            # name, date, message, data
+                            # name, data are optional
+                            # message is the message generated when escalite.escalate() is called
+                            # date is the current date and time when the message is sent, auto generated
+                            # Format the template following this example:
+                            # {
+                                #"type": "body",
+                                #"parameters": [
+                                #    {"type": "text", "parameter_name": "name", "text": ""},
+                                #    {
+                                #        "type": "text",
+                                #        "parameter_name": "date",
+                                #        "text": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                #   },
+                                #   {"type": "text", "parameter_name": "message", "text": None},
+                                #   {"type": "text", "parameter_name": "data", "text": ""},
+                                # ],
+                            # }
+                       ]
+                     }
+                }
             }
         }
     ]

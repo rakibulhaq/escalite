@@ -6,6 +6,7 @@
 [![Snyk](https://github.com/rakibulhaq/escalite/actions/workflows/snyk.yml/badge.svg?branch=main)](https://github.com/rakibulhaq/escalite/actions/workflows/snyk.yml)
 
 ![Escalite Logo](assets/escalite-logo.png)
+
 A Python library for per-request logging and escalation, designed for API services.
 
 ## Installation

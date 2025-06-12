@@ -1,9 +1,11 @@
 import logging
 import threading
 import time
+import uuid
 
 import pytest
 from escalite.escalite import Escalite
+from escalite.utils.constants import ALERT_ID
 
 
 class TestEscalite:
@@ -183,6 +185,7 @@ class TestEscalite:
         Escalite.end_logging()
         logs = Escalite.get_all_logs()
         assert logs == {
+            "alert_id": logs[ALERT_ID],
             "log_level": "info",
             "start_time": logs["start_time"],
             "end_time": logs["end_time"],
@@ -302,3 +305,23 @@ class TestEscalite:
         for t in threads:
             t.join()
         assert results == [f"value_{i}" for i in range(num_threads)]
+
+    def test_alert_id_is_unique_and_valid(self):
+        Escalite.start_logging()
+        logs1 = Escalite.get_all_logs()
+        alert_id1 = logs1[ALERT_ID]
+        Escalite.end_logging()
+
+        Escalite.start_logging()
+        logs2 = Escalite.get_all_logs()
+        alert_id2 = logs2[ALERT_ID]
+        Escalite.end_logging()
+
+        # Check both are valid UUIDs
+        uuid_obj1 = uuid.UUID(alert_id1)
+        uuid_obj2 = uuid.UUID(alert_id2)
+        assert str(uuid_obj1) == alert_id1
+        assert str(uuid_obj2) == alert_id2
+
+        # Check they are unique
+        assert alert_id1 != alert_id2

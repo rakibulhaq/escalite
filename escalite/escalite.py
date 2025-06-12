@@ -1,6 +1,7 @@
 import logging
 import time
 import contextvars
+import uuid
 from contextlib import contextmanager
 from typing import Any
 
@@ -15,6 +16,7 @@ from escalite.utils.constants import (
     ERROR_LOGS,
     TIME_ELAPSED,
     LOG_DATE,
+    ALERT_ID,
 )
 
 # Context variable for per-request logs
@@ -36,6 +38,7 @@ class Escalite:
         Starts per-request logging by initializing the context variable.
         """
         logs = {
+            ALERT_ID: str(uuid.uuid4()),
             API_LOGS: {},
             SERVICE_LOGS: {},
             ERROR_LOGS: {},

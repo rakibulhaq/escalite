@@ -1,3 +1,4 @@
+import functools
 import logging
 import time
 import contextvars
@@ -306,3 +307,24 @@ class Escalite:
             )
         NotifierFactory.notify(Escalite.notifiers, message, log_data)
         logger.info(f"Escalation completed with data: {log_data}")
+
+    @staticmethod
+    def route_logging(configs: dict, log_level: LOG_LEVEL = "error"):
+        """
+        Decorator for per-route logging and escalation.
+        """
+
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                Escalite.set_notifiers_from_configs(configs)
+                Escalite.start_logging()
+                try:
+                    return func(*args, **kwargs)
+                finally:
+                    Escalite.end_logging()
+                    Escalite.escalate(from_level=log_level)
+
+            return wrapper
+
+        return decorator

@@ -325,3 +325,38 @@ class TestEscalite:
 
         # Check they are unique
         assert alert_id1 != alert_id2
+
+    def test_route_logging_decorator(self, monkeypatch):
+        called = {}
+
+        # Mock notifier and escalate
+        class DummyNotifier:
+            def notify(self, message, log_data):
+                called["notified"] = True
+                called["message"] = message
+                called["log_data"] = log_data
+
+        monkeypatch.setattr(
+            "escalite.notifiers.notifier_factory.NotifierFactory.create_notifiers",
+            lambda cfg: [DummyNotifier()],
+        )
+        monkeypatch.setattr(
+            "escalite.notifiers.notifier_factory.NotifierFactory.notify",
+            lambda notifiers, message, log_data: notifiers[0].notify(message, log_data),
+        )
+
+        configs = {"notifiers": [{"type": "dummy"}]}
+
+        @Escalite.route_logging(configs=configs, log_level="info")
+        def sample_route():
+            Escalite.add_to_log("test_key", "test_value")
+            return "ok"
+
+        result = sample_route()
+        logs = Escalite.get_all_logs()
+
+        assert result == "ok"
+        assert ALERT_ID in logs
+        assert logs["test_key"]["value"] == "test_value"
+        assert called.get("notified") is True
+        assert "log_level" in called["log_data"]

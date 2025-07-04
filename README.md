@@ -1,12 +1,13 @@
 # Escalite
-![Escalite Logo](assets/escalite-logo.png)
-
+![Escalite Logo](https://raw.githubusercontent.com/rakibulhaq/escalite/main/logo.png)
 [![PyPI version](https://img.shields.io/pypi/v/escalite.svg)](https://pypi.org/project/escalite/)
 [![Python versions](https://img.shields.io/pypi/pyversions/escalite.svg)](https://pypi.org/project/escalite/)
 [![codecov](https://codecov.io/gh/rakibulhaq/escalite/branch/main/graph/badge.svg)](https://codecov.io/gh/rakibulhaq/escalite)
 [![Snyk](https://github.com/rakibulhaq/escalite/actions/workflows/snyk.yml/badge.svg?branch=main)](https://github.com/rakibulhaq/escalite/actions/workflows/snyk.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/escalite.svg?label=PyPI%20downloads)](https://pypistats.org/packages/escalite)
+[![Downloads](https://pepy.tech/badge/escalite)](https://pepy.tech/project/escalite)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 
 
 A Python library for per-request logging and escalation, designed for API services.

@@ -108,7 +108,7 @@ class Escalite:
                 logs[tag][key]["message"] = (
                     message if message is not None else logs[tag][key].get("message")
                 )
-                logs[tag][key]["log_level"] = Escalite.set_log_level(level, tag=tag)
+                logs[tag][key]["log_level"] = Escalite.update_log_level(level, tag=tag)
                 logs[tag][key]["log_time"] = current_time
                 logs[tag][key].setdefault(START_TIME, current_time)
                 logs[tag][key].setdefault(END_TIME, current_time)
@@ -126,7 +126,7 @@ class Escalite:
                     "value": value,
                     "code": code,
                     "message": message,
-                    "log_level": Escalite.set_log_level(level, tag=tag),
+                    "log_level": Escalite.update_log_level(level, tag=tag),
                     "log_time": current_time,
                     **(extras or {}),
                 }
@@ -151,7 +151,7 @@ class Escalite:
                 "value": value,
                 "code": code,
                 "message": message,
-                "log_level": Escalite.set_log_level(level),
+                "log_level": Escalite.update_log_level(level),
                 "log_time": time.time(),
                 **(extras or {}),
             }
@@ -166,7 +166,7 @@ class Escalite:
         )
 
     @staticmethod
-    def set_log_level(
+    def update_log_level(
         new_level: LOG_LEVEL, tag: str = None, force: bool = False
     ) -> str:
         logs = _request_logs.get()
@@ -189,9 +189,11 @@ class Escalite:
     @staticmethod
     def get_log_by_key(key: str, tag: str = None) -> Any:
         logs = _request_logs.get()
-        if logs is None:
+        if not logs:
             return None
-        return logs[tag].get(key, None) if tag else logs.get(key, None)
+        if tag and tag in logs:
+            return logs[tag].get(key, None)
+        return logs.get(key, None)
 
     @staticmethod
     def add_service_log(

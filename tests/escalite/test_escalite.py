@@ -6,6 +6,7 @@ import uuid
 import pytest
 from escalite.escalite import Escalite
 from escalite.utils.constants import ALERT_ID
+from contextlib import nullcontext as does_not_raise
 
 
 class TestEscalite:
@@ -66,32 +67,86 @@ class TestEscalite:
         assert entry["message"] == "Test message"
         assert logs["log_level"] == "info"
 
-    def test_set_log_level(self):
+    def test_add_to_log_raises_error_if_not_started(self):
+        from escalite.escalite import _request_logs
+
+        _request_logs.set(None)
+        with pytest.raises(RuntimeError):
+            Escalite.add_to_log("test_key", "test_value")
+
+    def test_update_log_level(self):
         Escalite.start_logging()
-        Escalite.set_log_level("debug", force=True)
+        Escalite.update_log_level("debug", force=True)
         assert Escalite.get_log_level() == "debug"
 
-        Escalite.set_log_level("error", tag="api_logs")
+        Escalite.update_log_level("error", tag="api_logs")
         assert Escalite.get_log_level(tag="api_logs") == "error"
 
         Escalite.end_logging()
 
-    def test_set_log_level_does_not_change_if_a_downgrade(self):
+    def test_update_log_level_does_not_change_if_no_logging_started(self):
+        from escalite.escalite import _request_logs
+
+        _request_logs.set(None)
+        Escalite.update_log_level("debug")
+        # Should remain 'info' since no logging has started
+        assert Escalite.get_log_level() == "info"
+
+    def test_update_log_level_does_not_change_if_a_downgrade(self):
         Escalite.start_logging()
-        Escalite.set_log_level("debug")
+        Escalite.update_log_level("debug")
         # Should remain 'info' since 'debug' is a lower level and force is False
         assert Escalite.get_log_level() == "info"
 
-    def test_set_log_level_updates_if_force(self):
+    def test_update_log_level_updates_if_force(self):
         Escalite.start_logging()
-        Escalite.set_log_level("debug", force=True)
+        Escalite.update_log_level("debug", force=True)
         assert Escalite.get_log_level() == "debug"
 
-        Escalite.set_log_level("critical")
-        Escalite.set_log_level("info", force=True)
+        Escalite.update_log_level("critical")
+        Escalite.update_log_level("info", force=True)
         assert Escalite.get_log_level() == "info"
 
         Escalite.end_logging()
+
+    def test_get_log_level_returns_info_if_no_logs_are_set(self):
+        from escalite.escalite import _request_logs
+
+        _request_logs.set(None)
+        assert Escalite.get_log_level() == "info"
+
+    def test_retrieves_log_by_key_when_key_exists(self):
+        Escalite.start_logging()
+        Escalite.add_to_log("key1", "value1")
+        result = Escalite.get_log_by_key("key1")
+        assert result["value"] == "value1"
+        Escalite.end_logging()
+
+    def test_retrieves_log_by_key_with_tag_when_key_exists(self):
+        Escalite.start_logging()
+        Escalite.add_to_log("key1", "value1", tag="API_LOGS")
+        result = Escalite.get_log_by_key("key1", tag="API_LOGS")
+        assert result["value"] == "value1"
+        Escalite.end_logging()
+
+    def test_returns_none_when_key_does_not_exist(self):
+        Escalite.start_logging()
+        result = Escalite.get_log_by_key("nonexistent_key")
+        assert result is None
+        Escalite.end_logging()
+
+    def test_returns_none_when_key_does_not_exist_with_tag(self):
+        Escalite.start_logging()
+        result = Escalite.get_log_by_key("nonexistent_key", tag="API_LOGS")
+        assert result is None
+        Escalite.end_logging()
+
+    def test_does_not_raise_error_when_logging_not_started(self):
+        from escalite.escalite import _request_logs
+
+        _request_logs.set(None)
+        with does_not_raise():
+            Escalite.get_log_by_key("key1")
 
     def test_add_to_log_with_extras(self):
         Escalite.start_logging()

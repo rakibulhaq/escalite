@@ -1,23 +1,23 @@
+import contextvars
 import functools
 import logging
 import time
-import contextvars
 import uuid
 from contextlib import contextmanager
 from typing import Any
 
 from escalite.notifiers.notifier_factory import NotifierFactory
 from escalite.utils.constants import (
+    ALERT_ID,
+    API_LOGS,
+    END_TIME,
+    ERROR_LOGS,
+    LOG_DATE,
     LOG_LEVEL,
     LOG_LEVELS,
-    API_LOGS,
-    START_TIME,
-    END_TIME,
     SERVICE_LOGS,
-    ERROR_LOGS,
+    START_TIME,
     TIME_ELAPSED,
-    LOG_DATE,
-    ALERT_ID,
 )
 
 # Context variable for per-request logs

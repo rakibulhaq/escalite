@@ -1,5 +1,6 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from escalite.formatters.dict_table_formatter import DictTableFormatter
 from escalite.notifiers.telegram_notifier import TelegramNotifier

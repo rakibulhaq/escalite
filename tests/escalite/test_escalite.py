@@ -2,11 +2,12 @@ import logging
 import threading
 import time
 import uuid
+from contextlib import nullcontext as does_not_raise
 
 import pytest
+
 from escalite.escalite import Escalite
 from escalite.utils.constants import ALERT_ID
-from contextlib import nullcontext as does_not_raise
 
 
 class TestEscalite:

@@ -1,8 +1,8 @@
 import requests
 
 from escalite.formatters.base_formatter import Formatter
-from escalite.notifiers.base_notifier import BaseNotifier
 from escalite.formatters.dict_table_formatter import DictTableFormatter
+from escalite.notifiers.base_notifier import BaseNotifier
 
 
 class TelegramNotifier(BaseNotifier):

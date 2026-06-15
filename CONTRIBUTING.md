@@ -38,9 +38,12 @@ Before starting work, please [open an issue](https://github.com/rakibulhaq/escal
   ```sh
   make install
   make lint
+  make format
   make test
   make build
   ```
+
+  Use `make lint` to check formatting and `make format` to apply it.
 
 ## 5. Run Tests
 

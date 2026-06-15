@@ -33,13 +33,21 @@ Before starting work, please [open an issue](https://github.com/rakibulhaq/escal
 
 - Implement your enhancement or bug fix.
 - **Write or update tests** to cover your changes. We encourage you to aim for as much test coverage as possible!
+- Common development commands are also available through `make`:
+
+  ```sh
+  make install
+  make lint
+  make test
+  make build
+  ```
 
 ## 5. Run Tests
 
 - Make sure all tests pass before submitting your PR:
 
   ```sh
-  poetry run pytest --cov
+  make test
   ```
 
 - Check the coverage report and add tests if needed.
